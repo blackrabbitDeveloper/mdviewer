@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="브라우저에서 안전하게 Markdown 파일을 열고 PDF로 저장하는 뷰어">
+  <title>Markdown Viewer</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="Markdown Viewer 홈">
+      <span class="brand-mark">M↓</span>
+      <span>Markdown Viewer</span>
+    </a>
+    <div class="header-actions">
+      <button id="theme-button" class="icon-button" type="button" aria-label="테마 변경" title="테마 변경">◐</button>
+      <button id="open-button" class="button secondary" type="button">파일 열기</button>
+      <button id="export-button" class="button primary" type="button">PDF로 저장</button>
+      <input id="file-input" type="file" accept=".md,.markdown,text/markdown,text/plain" hidden>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section id="welcome" class="welcome">
+      <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Markdown 파일 선택">
+        <div class="drop-icon" aria-hidden="true">.md</div>
+        <h1>Markdown을 보기 좋게 열어보세요</h1>
+        <p>파일을 여기에 놓거나 클릭해서 선택하세요.</p>
+        <span class="privacy-note">파일은 서버에 업로드되지 않고 이 브라우저에서만 처리됩니다.</span>
+      </div>
+      <button id="sample-button" class="text-button" type="button">예제 문서로 시작하기 →</button>
+    </section>
+
+    <section id="workspace" class="workspace" hidden>
+      <aside id="sidebar" class="sidebar">
+        <div class="document-meta">
+          <span class="eyebrow">DOCUMENT</span>
+          <strong id="filename">문서.md</strong>
+          <span id="document-stats"></span>
+        </div>
+        <nav aria-label="문서 목차">
+          <span class="eyebrow">CONTENTS</span>
+          <ol id="toc" class="toc"></ol>
+        </nav>
+      </aside>
+
+      <div class="document-column">
+        <div class="document-toolbar">
+          <div class="view-tabs" role="tablist" aria-label="보기 방식">
+            <button class="view-tab active" data-view="preview" type="button" role="tab">미리보기</button>
+            <button class="view-tab" data-view="split" type="button" role="tab">나란히</button>
+            <button class="view-tab" data-view="edit" type="button" role="tab">편집</button>
+          </div>
+          <span id="save-status" class="save-status" aria-live="polite">자동 저장됨</span>
+        </div>
+        <div id="document-stage" class="document-stage preview-mode">
+          <div class="editor-pane">
+            <label class="sr-only" for="editor">Markdown 편집기</label>
+            <textarea id="editor" spellcheck="false" aria-label="Markdown 편집기"></textarea>
+          </div>
+          <article id="preview" class="markdown-body"></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/lib/marked.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/highlight.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
+
