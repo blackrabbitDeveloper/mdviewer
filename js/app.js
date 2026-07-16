@@ -7,6 +7,7 @@ const elements = {
   dropzone: $('#dropzone'),
   fileInput: $('#file-input'),
   openButton: $('#open-button'),
+  resetButton: $('#reset-button'),
   exportButton: $('#export-button'),
   themeButton: $('#theme-button'),
   sampleButton: $('#sample-button'),
@@ -16,6 +17,7 @@ const elements = {
   editor: $('#editor'),
   preview: $('#preview'),
   stage: $('#document-stage'),
+  sidebarToggle: $('#sidebar-toggle'),
   saveStatus: $('#save-status'),
   toast: $('#toast'),
 };
@@ -145,7 +147,37 @@ function setTheme(theme) {
   elements.themeButton.textContent = theme === 'dark' ? '☀' : '◐';
 }
 
+function setSidebarCollapsed(collapsed) {
+  elements.workspace.classList.toggle('sidebar-collapsed', collapsed);
+  elements.sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+  elements.sidebarToggle.querySelector('.sidebar-toggle-label').textContent = collapsed ? '목차 열기' : '목차 접기';
+  localStorage.setItem('mdviewer-sidebar-collapsed', String(collapsed));
+}
+
+function resetDocument() {
+  if (!elements.workspace.hidden && !window.confirm('현재 문서와 브라우저에 저장된 내용을 지울까요?')) return;
+  clearTimeout(renderTimer);
+  localStorage.removeItem('mdviewer-content');
+  localStorage.removeItem('mdviewer-name');
+  currentName = 'document.md';
+  elements.editor.value = '';
+  elements.preview.innerHTML = '';
+  elements.toc.innerHTML = '';
+  elements.filename.textContent = '문서.md';
+  elements.stats.textContent = '';
+  elements.fileInput.value = '';
+  elements.workspace.hidden = true;
+  elements.welcome.hidden = false;
+  document.title = 'Markdown Viewer';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast('불러온 문서와 저장된 캐시를 초기화했습니다.');
+}
+
 elements.openButton.addEventListener('click', () => elements.fileInput.click());
+elements.resetButton.addEventListener('click', resetDocument);
+elements.sidebarToggle.addEventListener('click', () => {
+  setSidebarCollapsed(!elements.workspace.classList.contains('sidebar-collapsed'));
+});
 elements.dropzone.addEventListener('click', () => elements.fileInput.click());
 elements.dropzone.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' || event.key === ' ') elements.fileInput.click();
@@ -190,9 +222,9 @@ const preferredTheme = localStorage.getItem('mdviewer-theme')
   || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 setTheme(preferredTheme);
 setView(localStorage.getItem('mdviewer-view') || 'preview');
+setSidebarCollapsed(localStorage.getItem('mdviewer-sidebar-collapsed') === 'true');
 
 const savedContent = localStorage.getItem('mdviewer-content');
 if (savedContent) {
   openDocument(savedContent, localStorage.getItem('mdviewer-name') || 'document.md');
 }
-
