@@ -19,6 +19,7 @@
       <button id="theme-button" class="icon-button" type="button" aria-label="테마 변경" title="테마 변경">◐</button>
       <button id="open-button" class="button secondary" type="button">파일 열기</button>
       <button id="reset-button" class="button secondary reset-button" type="button">초기화</button>
+      <button id="save-button" class="button secondary" type="button">MD 저장</button>
       <button id="export-button" class="button primary" type="button">PDF로 저장</button>
       <input id="file-input" type="file" accept=".md,.markdown,text/markdown,text/plain" hidden>
     </div>
@@ -61,7 +62,23 @@
               <button class="view-tab" data-view="edit" type="button" role="tab">편집</button>
             </div>
           </div>
-          <span id="save-status" class="save-status" aria-live="polite">자동 저장됨</span>
+          <div class="toolbar-right">
+            <div class="font-controls" aria-label="본문 글꼴 크기">
+              <button id="font-decrease" type="button" aria-label="글꼴 작게">−</button>
+              <span id="font-size-label">100%</span>
+              <button id="font-increase" type="button" aria-label="글꼴 크게">＋</button>
+            </div>
+            <button id="search-toggle" class="tool-button" type="button" aria-expanded="false" aria-controls="search-panel">검색</button>
+            <span id="save-status" class="save-status" aria-live="polite">자동 저장됨</span>
+          </div>
+        </div>
+        <div id="search-panel" class="search-panel" hidden>
+          <label class="sr-only" for="search-input">문서 검색</label>
+          <input id="search-input" type="search" placeholder="문서에서 검색…" autocomplete="off">
+          <span id="search-count" aria-live="polite"></span>
+          <button id="search-prev" type="button" aria-label="이전 검색 결과">↑</button>
+          <button id="search-next" type="button" aria-label="다음 검색 결과">↓</button>
+          <button id="search-close" type="button" aria-label="검색 닫기">×</button>
         </div>
         <div id="document-stage" class="document-stage preview-mode">
           <div class="editor-pane">

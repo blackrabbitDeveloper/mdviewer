@@ -31,3 +31,12 @@ export function isMarkdownFile(file) {
   ));
 }
 
+export function renderDelay(textLength) {
+  if (textLength > 200_000) return 700;
+  if (textLength > 50_000) return 350;
+  return 120;
+}
+
+export function clampFontScale(value) {
+  return Math.min(130, Math.max(80, Math.round(value / 10) * 10));
+}
