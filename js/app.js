@@ -304,7 +304,7 @@ function setView(view) {
 
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  localStorage.setItem('mdviewer-theme', theme);
+  localStorage.setItem('utils-theme', theme);
   elements.themeButton.textContent = theme === 'dark' ? '☀' : '◐';
 }
 
@@ -411,7 +411,7 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-const preferredTheme = localStorage.getItem('mdviewer-theme')
+const preferredTheme = localStorage.getItem('utils-theme')
   || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 setTheme(preferredTheme);
 setView(localStorage.getItem('mdviewer-view') || 'preview');
