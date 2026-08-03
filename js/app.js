@@ -32,6 +32,7 @@ const elements = {
   searchPrev: $('#search-prev'),
   searchNext: $('#search-next'),
   searchClose: $('#search-close'),
+  backToTop: $('#back-to-top'),
   toast: $('#toast'),
 };
 
@@ -271,6 +272,10 @@ function toggleSearch(show = elements.searchPanel.hidden) {
   }
 }
 
+function updateBackToTop() {
+  elements.backToTop.hidden = elements.workspace.hidden || window.scrollY < 400;
+}
+
 function openDocument(content, filename) {
   currentName = filename || 'document.md';
   elements.filename.textContent = currentName;
@@ -370,6 +375,8 @@ elements.searchClose.addEventListener('click', () => toggleSearch(false));
 elements.searchInput.addEventListener('input', updateSearch);
 elements.searchPrev.addEventListener('click', () => focusSearchMatch(-1));
 elements.searchNext.addEventListener('click', () => focusSearchMatch(1));
+elements.backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+window.addEventListener('scroll', updateBackToTop, { passive: true });
 elements.searchInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     event.preventDefault();
