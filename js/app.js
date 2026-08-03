@@ -106,7 +106,8 @@ function render() {
   });
 
   elements.preview.querySelectorAll('a').forEach((link) => {
-    if (/^https?:/i.test(link.href)) {
+    const href = link.getAttribute('href') || '';
+    if (/^https?:\/\//i.test(href)) {
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
     }
