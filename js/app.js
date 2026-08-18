@@ -20,6 +20,8 @@ const elements = {
   editor: $('#editor'),
   preview: $('#preview'),
   stage: $('#document-stage'),
+  header: $('.app-header'),
+  topbar: $('.document-topbar'),
   sidebarToggle: $('#sidebar-toggle'),
   saveStatus: $('#save-status'),
   fontDecrease: $('#font-decrease'),
@@ -208,6 +210,9 @@ function setFontScale(value) {
 
 function clearSearchMarks() {
   elements.preview.querySelectorAll('mark.search-match').forEach((mark) => mark.replaceWith(mark.textContent));
+  // 표시를 걷어내면 텍스트 노드가 쪼개진 채 남는다. 병합하지 않으면 다음 검색어가
+  // 노드 경계에 걸려 찾지 못한다(예: "he" 검색 후 "hel" 검색 시 0개).
+  elements.preview.normalize();
   searchMatches = [];
   searchIndex = -1;
 }
@@ -245,8 +250,16 @@ function updateSearch() {
     });
     node.replaceWith(fragment);
   });
-  searchIndex = searchMatches.length ? 0 : -1;
+  searchIndex = searchMatches.length ? nearestMatchIndex() : -1;
   focusSearchMatch();
+}
+
+// 문서 처음이 아니라 지금 읽고 있는 위치에서 가장 가까운 아래쪽 결과부터 시작한다.
+// 화면을 지나친 경우에는 처음으로 돌아간다.
+function nearestMatchIndex() {
+  const boundary = elements.topbar.getBoundingClientRect().bottom;
+  const index = searchMatches.findIndex((mark) => mark.getBoundingClientRect().top >= boundary);
+  return index === -1 ? 0 : index;
 }
 
 function focusSearchMatch(step = 0) {
@@ -260,9 +273,18 @@ function focusSearchMatch(step = 0) {
   searchMatches[searchIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+// 고정된 헤더와 툴바에 제목이 가리지 않도록 목차 이동 여백을 실제 높이에 맞춘다.
+function syncStickyOffset() {
+  if (elements.workspace.hidden) return;
+  const offset = elements.header.getBoundingClientRect().height
+    + elements.topbar.getBoundingClientRect().height + 8;
+  document.documentElement.style.setProperty('--sticky-offset', `${Math.round(offset)}px`);
+}
+
 function toggleSearch(show = elements.searchPanel.hidden) {
   elements.searchPanel.hidden = !show;
   elements.searchToggle.setAttribute('aria-expanded', String(show));
+  syncStickyOffset();
   if (show) {
     elements.searchInput.focus();
     elements.searchInput.select();
@@ -283,6 +305,7 @@ function openDocument(content, filename) {
   elements.welcome.hidden = true;
   elements.workspace.hidden = false;
   render();
+  syncStickyOffset();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -318,6 +341,7 @@ function setSidebarCollapsed(collapsed) {
   elements.workspace.classList.toggle('sidebar-collapsed', collapsed);
   elements.sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
   elements.sidebarToggle.querySelector('.sidebar-toggle-label').textContent = collapsed ? '목차 열기' : '목차 접기';
+  syncStickyOffset();
   localStorage.setItem('mdviewer-sidebar-collapsed', String(collapsed));
 }
 
@@ -377,6 +401,7 @@ elements.searchPrev.addEventListener('click', () => focusSearchMatch(-1));
 elements.searchNext.addEventListener('click', () => focusSearchMatch(1));
 elements.backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 window.addEventListener('scroll', updateBackToTop, { passive: true });
+window.addEventListener('resize', syncStickyOffset, { passive: true });
 elements.searchInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     event.preventDefault();
