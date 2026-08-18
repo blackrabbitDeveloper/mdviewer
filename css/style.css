@@ -378,13 +378,16 @@ button { color: inherit; }
 @media (max-width: 600px) {
   .app-header { padding: 0 8px; }
   .brand { display: none; }
-  .header-actions { width: 100%; justify-content: center; gap: 5px; }
+  .header-actions { width: 100%; justify-content: flex-start; gap: 5px; overflow-x: auto; scrollbar-width: none; }
+  .header-actions::-webkit-scrollbar { display: none; }
+  .header-actions > * { flex-shrink: 0; }
   .button { flex: 0 1 auto; padding: 8px 6px; font-size: 11px; white-space: nowrap; }
   #theme-button { display: none; }
   .sidebar-toggle-label { display: none; }
   .save-status, .font-controls { display: none; }
   .document-toolbar { flex-wrap: wrap; }
-  .toolbar-right { margin-left: auto; }
+  .toolbar-right { width: 100%; margin-left: 0; justify-content: flex-start; overflow-x: auto; }
+  .toolbar-right > * { flex-shrink: 0; }
   .workspace { padding: 16px 12px 70px; }
   .dropzone { padding: 52px 18px; }
   .markdown-body { padding: 28px 22px; font-size: calc(15px * var(--reader-scale, 1)); }
